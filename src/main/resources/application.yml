@@ -21,6 +21,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-  springdoc:
-    swagger-ui:
-      path: /public/swagger
+springdoc:
+  swagger-ui:
+    path: /public/swagger
