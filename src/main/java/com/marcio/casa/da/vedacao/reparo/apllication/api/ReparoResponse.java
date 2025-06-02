@@ -12,6 +12,8 @@ import java.util.UUID;
 @ToString
 public class ReparoResponse {
 
+    @NotNull
+    private String nome;
     private UUID idReparo;
     @NotNull
     private String codigo;
@@ -24,6 +26,7 @@ public class ReparoResponse {
 
     public ReparoResponse(Reparo reparo) {
         this.idReparo = reparo.getIdReparo();
+        this.nome = reparo.getNome();
         this.codigo = reparo.getCodigo();
         this.medidas = reparo.getMedidas();
         this.valorComprado = reparo.getValorComprado();

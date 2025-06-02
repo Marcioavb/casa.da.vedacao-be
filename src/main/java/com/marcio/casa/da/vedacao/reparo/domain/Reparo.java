@@ -26,6 +26,8 @@ public class Reparo {
     @Column(columnDefinition = "uuid", updatable = false, unique = true, nullable = false)
     private UUID idReparo;
     @NotNull
+    private String nome;
+    @NotNull
     private String codigo;
     @NotNull
     private String medidas;
@@ -39,6 +41,7 @@ public class Reparo {
     public Reparo(ReparoRequest reparoRequest) {
 
         this.codigo = reparoRequest.getCodigo();
+        this.nome = reparoRequest.getNome();
         this.medidas = reparoRequest.getMedidas();
         this.valorComprado = reparoRequest.getValorComprado();
         this.local = reparoRequest.getLocal();

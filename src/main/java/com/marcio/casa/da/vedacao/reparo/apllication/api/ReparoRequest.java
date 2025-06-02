@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @ToString
 public class ReparoRequest {
     @NotNull
+    private String nome;
+    @NotNull
     private String codigo;
     @NotNull
     private String medidas;
