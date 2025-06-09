@@ -8,7 +8,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Repository
@@ -27,10 +30,29 @@ public class ReparoinfraRepository implements ReparoRepository {
     @Override
     public Reparo buscaPorCodigo(String codigo) {
         log.info("[inicia] ReparoinfraRepository - buscaPorCodigo");
-        Reparo reparo = springDataJPARepository.findByCodigo(codigo)
-                .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Codigo, nao encontrado," +
-                        "para esse codigo, contendo: " +
-                        "não existe na base de dados"));
+        String codigoLimpo = codigo.replaceAll("\\s+", "").trim();
+
+        // 1. Tenta busca exata
+        Optional<Reparo> reparoExato = springDataJPARepository.findByCodigo(codigoLimpo);
+        if (reparoExato.isPresent()) {
+            return reparoExato.get();
+        }
+
+        // 2. Busca por partes do código
+        List<Reparo> reparos = springDataJPARepository.findByParteDoCodigo(codigoLimpo);
+
+        // 3. Filtra para encontrar o registro onde a parte buscada aparece PRIMEIRO
+        Reparo reparo = reparos.stream()
+                .filter(r -> {
+                    String[] partes = r.getCodigo().split("/");
+                    String primeiraParte = partes[0].replaceAll("\\s+", "");
+                    return primeiraParte.equals(codigoLimpo);
+                })
+                .findFirst()
+                .orElse(reparos.stream().findFirst()
+                        .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND,
+                                "Nenhum reparo encontrado para o código: " + codigo)));
+
         log.info("[finaliza] ReparoinfraRepository - buscaPorCodigo");
         return reparo;
     }
